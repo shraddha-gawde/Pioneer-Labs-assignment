@@ -1,6 +1,6 @@
 const express = require("express")
 const{ connection } = require("./db")
-
+const { router } = require("./routes/user.routes")
 
 const cors = require("cors")
 
@@ -13,7 +13,7 @@ app.use(cors())
 app.get("/",(req,res)=>{
     res.json("this is home")
 })
-
+app.use("/users", router)
 
 app.listen(4400, async()=>{
     try{
