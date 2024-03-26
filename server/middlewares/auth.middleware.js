@@ -1,29 +1,31 @@
 const jwt = require('jsonwebtoken');
+const { blacklistModel } = require("../models/blacklist.model")
+require("dotenv").config()
 
+const authentication = async (req, res, next) => {
+    const access_token = req.headers.authorization?.split(" ")[1];
 
-const auth = async (req, res, next) => {
-    const token = req.headers.authorization?.split(" ")[1];
-    try {
-        if (!token) {
-            return res.status(401).json({ msg: 'No token provided' });
-        }
-
-        const decoded = jwt.verify(token, 'prits');
-        if (!decoded) {
-            return res.status(401).json({ msg: 'Invalid token' });
-        }
-        const redisToken = await redis.get(decoded.email);
-        if (redisToken !== token) {
-            return res.status(401).json({ msg: 'Token not found in Redis. Please login again.' });
-        }
-
-        next();
-    } catch (err) {
-        console.error('Authentication error:', err);
-        res.status(500).json({ error: 'Internal server error' });
+    if (!access_token) {
+        return res.status(401).json({ msg: 'No token provided' });
     }
-}
 
-module.exports ={
-    auth
+    // Check if token is blacklisted
+    const isBlacklisted = await blacklistModel.findOne({ access_token });
+    if (isBlacklisted) {
+        return res.status(401).json({ msg: 'Token is blacklisted !!! Please login again' });
+    }
+    try {
+        const secret_key = process.env.secretkey
+        console.log(secret_key)
+        const decoded = jwt.verify(access_token, secret_key);
+        console.log(decoded)
+        req.user = decoded.user;
+        next();
+    } catch (error) {
+        return res.status(401).json({ message: 'Invalid token' });
+    }
+};
+
+module.exports = {
+    authentication
 }

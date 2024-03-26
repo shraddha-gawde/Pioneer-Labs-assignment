@@ -41,7 +41,7 @@ const login = async(req, res)=>{
                 }
                 if(result){
                     const secret_key = process.env.secretkey
-                    const access_token = jwt.sign({ userID:user._id , username:user.username}, secret_key, {expiresIn : "7d"});
+                    const access_token = jwt.sign({ userID:user._id , username:user.username}, secret_key, {expiresIn : "1d"});
                     const refresh_token = jwt.sign({ userID:user._id , username:user.username}, secret_key,{ expiresIn : "14d"});
 
                     res.cookie("access_token", access_token, {httpOnly: true})
@@ -102,9 +102,19 @@ const logout = async(req, res)=>{
       res.status(400).json({ error:err});
     }
 }
+
+const user = async(req, res)=>{
+    try {
+        const users = await userModel.find();
+        res.status(200).json({ user_data: users });
+      } catch (err) {
+        res.status(400).json({ error: err });
+      }
+}
 module.exports={
     register,
     login,
     logout,
-    resetPassword
+    resetPassword,
+    user
 }
