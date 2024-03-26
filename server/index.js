@@ -22,7 +22,10 @@ const options = {
       },
       servers: [
         {
-          url: "http://localhost:4400",
+            url: "http://localhost:4400",
+        },
+        {
+            url: "https://pioneer-labs-assignment-u346.onrender.com",
         },
       ],
     },
