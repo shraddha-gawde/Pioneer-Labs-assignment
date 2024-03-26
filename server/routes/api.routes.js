@@ -10,13 +10,14 @@ router.use(cookieparser())
 
 router.post("/users/registerUser", register)
 router.post("/users/login", login)
-router.get("/users/logout", logout)
-router.post("/users/:id/reset", resetPassword)
+
+// router.post("/users/:id/reset", resetPassword)
 
 router.use(authentication)
-
+router.post("/users/:id/reset", resetPassword)
 router.get("/users/", user)
 router.get("/data", data)
+router.get("/users/logout", logout)
 
 module.exports={ 
     router 

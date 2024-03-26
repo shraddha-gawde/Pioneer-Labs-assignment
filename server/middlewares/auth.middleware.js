@@ -16,9 +16,9 @@ const authentication = async (req, res, next) => {
     }
     try {
         const secret_key = process.env.secretkey
-        console.log(secret_key)
+        // console.log(secret_key)
         const decoded = jwt.verify(access_token, secret_key);
-        console.log(decoded)
+        // console.log(decoded)
         req.user = decoded.user;
         next();
     } catch (error) {

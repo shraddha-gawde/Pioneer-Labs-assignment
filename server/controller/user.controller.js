@@ -37,7 +37,7 @@ const login = async(req, res)=>{
         if(user){
             bcrypt.compare(password, user.password, (err, result)=>{
                 if(err){
-                    res.status(200).json({msg:"user Does not exists!!!"})
+                    res.status(200).json({msg:"check email and password correctly!!!"})
                 }
                 if(result){
                     const secret_key = process.env.secretkey
@@ -50,7 +50,7 @@ const login = async(req, res)=>{
                     res.status(200).json({msg:"Login successful!", name, access_token, refresh_token})
                 }
                 else{
-                    res.status(200).json({msg:"user Does not exists!!!"})
+                    res.status(201).json({msg:"password is wrong!!!"})
                 }
             })
         }else{
@@ -71,13 +71,15 @@ const resetPassword = async(req, res)=>{
         if(!user){
             return res.status(200).json({msg: "User not found"})
         }
+
         const isValid = await bcrypt.compare(currPassword, user.password)
         if(!isValid){
             return res.status(200).json({msg: "Invalid current password"})
         }
-        const hash = await bcrypt.hash(newPassword, 5)
 
-        user.password = hash;
+        const hash = await bcrypt.hash(newPassword, 5)
+        console.log("New Password Hash:", hash);
+
         await user.save();
         res.status(200).json({ msg: "Password reset successfully",user :user});
     }
